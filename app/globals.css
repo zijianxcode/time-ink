@@ -399,35 +399,199 @@ html, body {
   background: #333;
 }
 
-/* ========== 响应式 ========== */
-@media (max-width: 600px) {
+/* ========== 响应式 - 平板 ========== */
+@media (max-width: 768px) {
   .setupTitle {
-    font-size: 48px;
+    font-size: 56px;
+  }
+  
+  .writingArea {
+    padding: 60px 30px;
+  }
+  
+  .edgePulseLeft,
+  .edgePulseRight {
+    width: 50px;
+  }
+}
+
+/* ========== 响应式 - 手机 ========== */
+@media (max-width: 480px) {
+  /* 设置页面 */
+  .setupPage {
+    padding: 24px 20px;
+  }
+  
+  .setupTitle {
+    font-size: 42px;
+    letter-spacing: -1px;
   }
   
   .setupSubtitle {
-    font-size: 16px;
+    font-size: 15px;
+    margin-top: 12px;
+    margin-bottom: 36px;
   }
   
   .setupControls {
-    flex-direction: column;
     width: 100%;
-    max-width: 280px;
+    padding: 0 20px;
   }
   
-  .durationSelect, .startBtn {
-    width: 100%;
+  .durationPrompt {
+    font-size: 16px;
   }
   
-  .resultContent {
-    padding: 32px 24px;
+  .durationSelect {
+    width: 100%;
+    padding: 14px 40px 14px 16px;
+    font-size: 16px;
+  }
+  
+  .startBtn {
+    width: 64px;
+    height: 64px;
+  }
+  
+  .startBtn svg {
+    width: 24px;
+    height: 24px;
+  }
+  
+  /* 写作页面 */
+  .writingHeader {
+    padding: 12px 16px;
+  }
+  
+  .modeToggle {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+  
+  .timerCorner {
+    font-size: 13px;
+  }
+  
+  .writingArea {
+    padding: 50px 16px 20px;
+    align-items: flex-start;
   }
   
   .immersiveEditor {
-    font-size: 18px;
+    font-size: 17px;
+    line-height: 1.75;
+    min-height: 70vh;
+  }
+  
+  .edgePulseLeft,
+  .edgePulseRight {
+    width: 30px;
   }
   
   .gentleText {
-    font-size: 80px;
+    font-size: 72px;
+  }
+  
+  /* 结果页面 */
+  .resultPage {
+    padding: 16px;
+    align-items: flex-start;
+    padding-top: 60px;
+  }
+  
+  .resultContent {
+    padding: 28px 20px;
+    border-radius: 16px;
+  }
+  
+  .pauseIcon,
+  .successIcon {
+    width: 64px;
+    height: 64px;
+    font-size: 36px;
+    margin-bottom: 20px;
+  }
+  
+  .resultContent h1 {
+    font-size: 24px;
+    margin-bottom: 12px;
+  }
+  
+  .resultContent > p {
+    font-size: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .quoteBox {
+    margin: 16px 0 24px;
+    padding: 16px;
+  }
+  
+  .quoteText {
+    font-size: 15px;
+  }
+  
+  .quoteAuthor {
+    font-size: 13px;
+  }
+  
+  .savedTextBox {
+    padding: 16px;
+    max-height: 200px;
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+  
+  .resultActions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .copyBtn, .restartBtn {
+    width: 100%;
+    padding: 14px 20px;
+    font-size: 15px;
+  }
+}
+
+/* ========== 安全区域适配（刘海屏等） ========== */
+@supports (padding: max(0px)) {
+  .writingPage {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+  
+  .writingHeader {
+    padding-top: max(12px, env(safe-area-inset-top));
+  }
+}
+
+/* ========== 触摸优化 ========== */
+@media (hover: none) and (pointer: coarse) {
+  .startBtn:hover {
+    transform: none;
+  }
+  
+  .copyBtn:hover,
+  .restartBtn:hover {
+    background: inherit;
+  }
+  
+  .restartBtn:hover {
+    background: #111;
+  }
+  
+  .startBtn:active {
+    transform: scale(0.95);
+  }
+  
+  .copyBtn:active {
+    background: #d0d0d0;
+  }
+  
+  .restartBtn:active {
+    background: #000;
   }
 }
