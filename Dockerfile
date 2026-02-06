@@ -1,5 +1,5 @@
-# 第一阶段：构建 Next.js 静态文件
-FROM node:18-alpine AS builder
+# 单阶段构建：构建并提供静态文件
+FROM node:18-alpine
 
 WORKDIR /app
 
@@ -9,23 +9,18 @@ COPY package*.json ./
 # 安装依赖
 RUN npm ci
 
+# 安装 serve 用于提供静态文件
+RUN npm install -g serve
+
 # 复制源代码
 COPY . .
 
 # 构建静态文件
 RUN npm run build
 
-# 第二阶段：使用轻量级服务器提供静态文件
-FROM python:3.11-alpine
-
-WORKDIR /app
-
-# 从构建阶段复制静态文件
-COPY --from=builder /app/out ./out
-
 # 暴露端口
 EXPOSE 8000
 
-# 使用 Python http.server 提供静态文件
+# 使用 serve 提供静态文件
 # 使用 shell form 确保 PORT 环境变量正确展开
-CMD sh -c "cd /app/out && python -m http.server ${PORT:-8000}"
+CMD sh -c "serve -s out -l ${PORT:-8000}"
