@@ -23,5 +23,5 @@ COPY server.py ./
 
 EXPOSE 8000
 
-# 使用自定义 Python 脚本启动服务器
-CMD ["python", "server.py"]
+# 使用 shell form 确保 PORT 环境变量正确展开
+CMD sh -c "python server.py"
