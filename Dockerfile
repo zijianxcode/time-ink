@@ -17,10 +17,11 @@ FROM python:3.11-alpine
 
 WORKDIR /app
 
-# 复制构建产物
+# 复制构建产物和启动脚本
 COPY --from=builder /app/out ./out
+COPY server.py ./
 
 EXPOSE 8000
 
-# 使用 Python http.server（Python 3.11 使用 -b 参数）
-CMD sh -c "cd /app/out && python -m http.server ${PORT:-8000} -b 0.0.0.0"
+# 使用自定义 Python 脚本启动服务器
+CMD ["python", "server.py"]
