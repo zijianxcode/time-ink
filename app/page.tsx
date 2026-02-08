@@ -1,8 +1,66 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import InkCanvas from "./InkCanvas";
 
 const DURATIONS = [3, 15, 30, 45] as const;
+
+// 墨水飞溅粒子
+function InkSplash({ onComplete }: { onComplete: () => void }) {
+  const particles = Array.from({ length: 18 }, (_, i) => {
+    const angle = (Math.PI * 2 * i) / 18 + (Math.random() - 0.5) * 0.5;
+    const distance = 80 + Math.random() * 200;
+    const size = 4 + Math.random() * 12;
+    const duration = 0.5 + Math.random() * 0.4;
+    return { angle, distance, size, duration, id: i };
+  });
+
+  return (
+    <motion.div
+      className="inkSplashContainer"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: 0 }}
+      transition={{ delay: 0.8, duration: 0.3 }}
+      onAnimationComplete={onComplete}
+    >
+      {/* 中心墨团 */}
+      <motion.div
+        className="inkCenter"
+        initial={{ scale: 0, opacity: 1 }}
+        animate={{ scale: 3, opacity: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      />
+      {/* 飞溅粒子 */}
+      {particles.map((p) => (
+        <motion.div
+          key={p.id}
+          className="inkParticle"
+          style={{ width: p.size, height: p.size }}
+          initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
+          animate={{
+            x: Math.cos(p.angle) * p.distance,
+            y: Math.sin(p.angle) * p.distance,
+            opacity: 0,
+            scale: 0.3,
+          }}
+          transition={{ duration: p.duration, ease: "easeOut" }}
+        />
+      ))}
+    </motion.div>
+  );
+}
+
+// Blur-in 文字动画
+const blurInVariants = {
+  hidden: { opacity: 0, filter: "blur(12px)", y: 10 },
+  visible: (delay: number) => ({
+    opacity: 1,
+    filter: "blur(0px)",
+    y: 0,
+    transition: { duration: 0.8, delay, ease: "easeOut" as const },
+  }),
+};
 
 const QUOTES = [
   { text: "写作是思考的最佳方式。", author: "Stephen King" },
@@ -25,7 +83,7 @@ export default function Page() {
   const [durationMin, setDurationMin] = useState<number>(15);
   const [remainingSec, setRemainingSec] = useState<number>(15 * 60);
   const [text, setText] = useState("");
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
   
   // 追踪停止输入后的秒数
   const [idleSec, setIdleSec] = useState(0);
@@ -34,8 +92,6 @@ export default function Page() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const isComposingRef = useRef(false); // 追踪中文输入法组合状态
   const lastConfirmedTextRef = useRef(""); // 记录上次确认的文本
-
-  const totalSec = durationMin * 60;
 
   // 计算模糊程度：5秒后开始，9秒时约50%模糊（最大6px）
   const blurAmount = hasStartedTyping && idleSec > 5 ? Math.min((idleSec - 5) * 1.5, 6) : 0;
@@ -137,10 +193,18 @@ export default function Page() {
     setIdleSec(0);
   };
 
+  // 墨水动画状态
+  const [showInkSplash, setShowInkSplash] = useState(false);
+
   const startWriting = () => {
+    setShowInkSplash(true);
+  };
+
+  const handleInkComplete = () => {
+    setShowInkSplash(false);
     setRemainingSec(durationMin * 60);
     setText("");
-    lastConfirmedTextRef.current = ""; // 重置确认的文本
+    lastConfirmedTextRef.current = "";
     setIdleSec(0);
     setHasStartedTyping(false);
     lastInputRef.current = Date.now();
@@ -173,10 +237,40 @@ export default function Page() {
   if (phase === "setup") {
     return (
       <main className="setupPage">
-        <h1 className="setupTitle">Time Ink</h1>
-        <p className="setupSubtitle">让时间带着你写下去</p>
+        {/* 交互式水墨画布 */}
+        <InkCanvas />
 
-        <div className="setupControls">
+        {/* 墨水飞溅动画 */}
+        <AnimatePresence>
+          {showInkSplash && <InkSplash onComplete={handleInkComplete} />}
+        </AnimatePresence>
+
+        <motion.h1
+          className="setupTitle"
+          variants={blurInVariants}
+          initial="hidden"
+          animate="visible"
+          custom={0}
+        >
+          Time Ink
+        </motion.h1>
+        <motion.p
+          className="setupSubtitle"
+          variants={blurInVariants}
+          initial="hidden"
+          animate="visible"
+          custom={0.2}
+        >
+          让时间带着你写下去
+        </motion.p>
+
+        <motion.div
+          className="setupControls"
+          variants={blurInVariants}
+          initial="hidden"
+          animate="visible"
+          custom={0.4}
+        >
           <p className="durationPrompt">这次写作，你想用多久？</p>
           <select 
             className="durationSelect"
@@ -188,15 +282,22 @@ export default function Page() {
             ))}
           </select>
 
-          <button className="startBtn" onClick={startWriting} title="开始写作">
+          <motion.button
+            className="startBtn"
+            onClick={startWriting}
+            title="开始写作"
+            whileHover={{ scale: 1.1, boxShadow: "0 0 20px rgba(0,0,0,0.15)" }}
+            whileTap={{ scale: 0.92 }}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
               <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
               <path d="M2 2l7.586 7.586"></path>
               <circle cx="11" cy="11" r="2"></circle>
             </svg>
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
       </main>
     );
   }

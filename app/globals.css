@@ -7,6 +7,53 @@ html, body {
   height: 100%;
 }
 
+/* ========== 毛笔光标 ========== */
+.setupPage,
+.setupPage * {
+  cursor: url('/brush-cursor.svg') 4 28, auto;
+}
+
+/* ========== 交互式水墨画布 ========== */
+.inkCanvas {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  /* 默认不拦截事件，让下层 UI 可以正常交互 */
+  pointer-events: none;
+}
+
+/* 让设置页面的内容在画布上方 */
+.setupPage > *:not(.inkCanvas) {
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+/* ========== 墨水飞溅动画 ========== */
+.inkSplashContainer {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.inkCenter {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #1a1a1a 0%, rgba(26, 26, 26, 0.6) 50%, transparent 70%);
+}
+
+.inkParticle {
+  position: absolute;
+  border-radius: 50%;
+  background: #1a1a1a;
+}
+
 /* ========== 设置页面 ========== */
 .setupPage {
   min-height: 100vh;
@@ -16,6 +63,8 @@ html, body {
   justify-content: center;
   padding: 20px;
   background: #f7f7f7;
+  position: relative;
+  overflow: hidden;
 }
 
 .setupTitle {
@@ -87,7 +136,6 @@ html, body {
 
 .startBtn:hover {
   background: #333;
-  transform: scale(1.05);
 }
 
 /* ========== 沉浸式写作页面 ========== */
