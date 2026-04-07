@@ -51,17 +51,6 @@ function InkSplash({ onComplete }: { onComplete: () => void }) {
   );
 }
 
-// Blur-in 文字动画
-const blurInVariants = {
-  hidden: { opacity: 0, filter: "blur(12px)", y: 10 },
-  visible: (delay: number) => ({
-    opacity: 1,
-    filter: "blur(0px)",
-    y: 0,
-    transition: { duration: 0.8, delay, ease: "easeOut" as const },
-  }),
-};
-
 const QUOTES = [
   { text: "写作是思考的最佳方式。", author: "Stephen King" },
   { text: "第一稿的唯一目的是存在。", author: "Anne Lamott" },
@@ -245,32 +234,14 @@ export default function Page() {
           {showInkSplash && <InkSplash onComplete={handleInkComplete} />}
         </AnimatePresence>
 
-        <motion.h1
-          className="setupTitle"
-          variants={blurInVariants}
-          initial="hidden"
-          animate="visible"
-          custom={0}
-        >
+        <h1 className="setupTitle setupIntro">
           Time Ink
-        </motion.h1>
-        <motion.p
-          className="setupSubtitle"
-          variants={blurInVariants}
-          initial="hidden"
-          animate="visible"
-          custom={0.2}
-        >
+        </h1>
+        <p className="setupSubtitle setupIntro setupIntro--subtitle">
           让时间带着你写下去
-        </motion.p>
+        </p>
 
-        <motion.div
-          className="setupControls"
-          variants={blurInVariants}
-          initial="hidden"
-          animate="visible"
-          custom={0.4}
-        >
+        <div className="setupControls setupIntro setupIntro--controls">
           <p className="durationPrompt">这次写作，你想用多久？</p>
           <select 
             className="durationSelect"
@@ -297,7 +268,7 @@ export default function Page() {
               <circle cx="11" cy="11" r="2"></circle>
             </svg>
           </motion.button>
-        </motion.div>
+        </div>
       </main>
     );
   }

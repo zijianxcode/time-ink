@@ -10,7 +10,7 @@ html, body {
 /* ========== 毛笔光标 ========== */
 .setupPage,
 .setupPage * {
-  cursor: url('/brush-cursor.svg') 4 28, auto;
+  cursor: var(--brush-cursor, url('/brush-cursor.svg') 4 28, auto);
 }
 
 /* ========== 交互式水墨画布 ========== */
@@ -88,6 +88,34 @@ html, body {
   flex-direction: column;
   align-items: center;
   gap: 24px;
+}
+
+.setupIntro {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
+  animation: setupFadeIn 0.8s ease-out forwards;
+}
+
+.setupIntro--subtitle {
+  animation-delay: 0.2s;
+}
+
+.setupIntro--controls {
+  animation-delay: 0.4s;
+}
+
+@keyframes setupFadeIn {
+  from {
+    opacity: 1;
+    filter: blur(8px);
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
 }
 
 .durationPrompt {
